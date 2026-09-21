@@ -3,28 +3,6 @@ const modes = document.querySelectorAll(".mode");
 
 
 // =========================
-// DEBUG MESSAGE
-// =========================
-
-const debugBox = document.createElement("div");
-
-debugBox.style.position = "fixed";
-debugBox.style.bottom = "20px";
-debugBox.style.left = "20px";
-debugBox.style.background = "#222";
-debugBox.style.color = "white";
-debugBox.style.padding = "15px";
-debugBox.style.borderRadius = "8px";
-debugBox.style.zIndex = "99999";
-debugBox.style.fontFamily = "Arial";
-debugBox.style.fontSize = "14px";
-
-debugBox.textContent = "Checking Discord login...";
-
-document.body.appendChild(debugBox);
-
-
-// =========================
 // DISCORD LOGIN CHECK
 // =========================
 
@@ -37,49 +15,34 @@ fetch(DISCORD_WORKER + "/me", {
 })
 .then(function(response) {
 
-    debugBox.textContent =
-        "Discord response: " + response.status;
+    if (!response.ok) {
+        throw new Error("Discord login check failed");
+    }
 
-    return response.text();
+    return response.json();
 
 })
-.then(function(text) {
+.then(function(data) {
 
-    debugBox.textContent =
-        "Discord response: " + text;
+    if (data.loggedIn === true) {
 
-    try {
+        // User is logged in
+        document.body.classList.add("logged-in");
 
-        const data = JSON.parse(text);
+    } else {
 
-        if (data.loggedIn === true) {
-
-            document.body.classList.add("logged-in");
-
-            debugBox.textContent =
-                "LOGIN DETECTED! Submit should be visible.";
-
-        } else {
-
-            document.body.classList.remove("logged-in");
-
-            debugBox.textContent =
-                "NOT LOGGED IN. Submit is hidden.";
-
-        }
-
-    } catch (error) {
-
-        debugBox.textContent =
-            "Could not read Discord response.";
+        // User is not logged in
+        document.body.classList.remove("logged-in");
 
     }
 
 })
 .catch(function(error) {
 
-    debugBox.textContent =
-        "DISCORD ERROR: " + error.message;
+    console.error("Discord login check failed:", error);
+
+    // Keep Submit hidden if the login check fails
+    document.body.classList.remove("logged-in");
 
 });
 
@@ -123,14 +86,17 @@ modes.forEach(function(mode) {
 
     mode.addEventListener("click", function(event) {
 
+        // Don't open/close when clicking verifier
         if (event.target.classList.contains("verifier")) {
             return;
         }
 
+        // Don't open/close when clicking Submit
         if (event.target.classList.contains("submit-button")) {
             return;
         }
 
+        // Close all other modes
         modes.forEach(function(otherMode) {
 
             if (otherMode !== mode) {
@@ -139,6 +105,7 @@ modes.forEach(function(mode) {
 
         });
 
+        // Toggle this mode
         mode.classList.toggle("open");
 
     });
