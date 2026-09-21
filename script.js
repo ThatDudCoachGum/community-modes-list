@@ -26,12 +26,10 @@ fetch(DISCORD_WORKER + "/me", {
 
     if (data.loggedIn === true) {
 
-        // User is logged in
         document.body.classList.add("logged-in");
 
     } else {
 
-        // User is not logged in
         document.body.classList.remove("logged-in");
 
     }
@@ -41,7 +39,6 @@ fetch(DISCORD_WORKER + "/me", {
 
     console.error("Discord login check failed:", error);
 
-    // Keep Submit hidden if the login check fails
     document.body.classList.remove("logged-in");
 
 });
@@ -86,17 +83,14 @@ modes.forEach(function(mode) {
 
     mode.addEventListener("click", function(event) {
 
-        // Don't open/close when clicking verifier
         if (event.target.classList.contains("verifier")) {
             return;
         }
 
-        // Don't open/close when clicking Submit
         if (event.target.classList.contains("submit-button")) {
             return;
         }
 
-        // Close all other modes
         modes.forEach(function(otherMode) {
 
             if (otherMode !== mode) {
@@ -105,7 +99,6 @@ modes.forEach(function(mode) {
 
         });
 
-        // Toggle this mode
         mode.classList.toggle("open");
 
     });
