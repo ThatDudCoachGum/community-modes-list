@@ -1,5 +1,12 @@
+alert("SCRIPT IS WORKING - DISCORD TEST");
+
+console.log("========== CML SCRIPT STARTED ==========");
+
 const searchBar = document.getElementById("searchBar");
 const modes = document.querySelectorAll(".mode");
+
+console.log("Search bar:", searchBar);
+console.log("Modes found:", modes.length);
 
 
 // =========================
@@ -9,43 +16,59 @@ const modes = document.querySelectorAll(".mode");
 const DISCORD_WORKER =
     "https://cml-discord-login.majorbooz22.workers.dev";
 
+console.log("Checking Discord login...");
+console.log("Worker URL:", DISCORD_WORKER + "/me");
+
 fetch(DISCORD_WORKER + "/me", {
     method: "GET",
     credentials: "include"
 })
 .then(function(response) {
 
-    console.log("ME STATUS:", response.status);
+    console.log("========== DISCORD RESPONSE ==========");
+    console.log("Status:", response.status);
+    console.log("OK:", response.ok);
+    console.log("Headers:", [...response.headers.entries()]);
 
     return response.text();
 
 })
 .then(function(text) {
 
-    console.log("ME RESPONSE:", text);
+    console.log("Response text:", text);
 
-    const data = JSON.parse(text);
+    try {
 
-    if (data.loggedIn === true) {
+        const data = JSON.parse(text);
 
-        console.log("LOGIN DETECTED!");
+        console.log("Parsed data:", data);
+        console.log("loggedIn:", data.loggedIn);
 
-        document.body.classList.add("logged-in");
+        if (data.loggedIn === true) {
 
-    } else {
+            console.log(">>> LOGIN DETECTED <<<");
 
-        console.log("NOT LOGGED IN");
+            document.body.classList.add("logged-in");
 
-        document.body.classList.remove("logged-in");
+        } else {
+
+            console.log(">>> NOT LOGGED IN <<<");
+
+            document.body.classList.remove("logged-in");
+
+        }
+
+    } catch (error) {
+
+        console.error("Could not parse response:", error);
 
     }
 
 })
 .catch(function(error) {
 
-    console.log("DISCORD FETCH ERROR:", error);
-
-    document.body.classList.remove("logged-in");
+    console.error("========== DISCORD FETCH ERROR ==========");
+    console.error(error);
 
 });
 
