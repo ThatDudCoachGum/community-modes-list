@@ -1,12 +1,27 @@
-alert("SCRIPT IS WORKING - DISCORD TEST");
-
-console.log("========== CML SCRIPT STARTED ==========");
-
 const searchBar = document.getElementById("searchBar");
 const modes = document.querySelectorAll(".mode");
 
-console.log("Search bar:", searchBar);
-console.log("Modes found:", modes.length);
+
+// =========================
+// DEBUG MESSAGE
+// =========================
+
+const debugBox = document.createElement("div");
+
+debugBox.style.position = "fixed";
+debugBox.style.bottom = "20px";
+debugBox.style.left = "20px";
+debugBox.style.background = "#222";
+debugBox.style.color = "white";
+debugBox.style.padding = "15px";
+debugBox.style.borderRadius = "8px";
+debugBox.style.zIndex = "99999";
+debugBox.style.fontFamily = "Arial";
+debugBox.style.fontSize = "14px";
+
+debugBox.textContent = "Checking Discord login...";
+
+document.body.appendChild(debugBox);
 
 
 // =========================
@@ -16,59 +31,55 @@ console.log("Modes found:", modes.length);
 const DISCORD_WORKER =
     "https://cml-discord-login.majorbooz22.workers.dev";
 
-console.log("Checking Discord login...");
-console.log("Worker URL:", DISCORD_WORKER + "/me");
-
 fetch(DISCORD_WORKER + "/me", {
     method: "GET",
     credentials: "include"
 })
 .then(function(response) {
 
-    console.log("========== DISCORD RESPONSE ==========");
-    console.log("Status:", response.status);
-    console.log("OK:", response.ok);
-    console.log("Headers:", [...response.headers.entries()]);
+    debugBox.textContent =
+        "Discord response: " + response.status;
 
     return response.text();
 
 })
 .then(function(text) {
 
-    console.log("Response text:", text);
+    debugBox.textContent =
+        "Discord response: " + text;
 
     try {
 
         const data = JSON.parse(text);
 
-        console.log("Parsed data:", data);
-        console.log("loggedIn:", data.loggedIn);
-
         if (data.loggedIn === true) {
-
-            console.log(">>> LOGIN DETECTED <<<");
 
             document.body.classList.add("logged-in");
 
+            debugBox.textContent =
+                "LOGIN DETECTED! Submit should be visible.";
+
         } else {
 
-            console.log(">>> NOT LOGGED IN <<<");
-
             document.body.classList.remove("logged-in");
+
+            debugBox.textContent =
+                "NOT LOGGED IN. Submit is hidden.";
 
         }
 
     } catch (error) {
 
-        console.error("Could not parse response:", error);
+        debugBox.textContent =
+            "Could not read Discord response.";
 
     }
 
 })
 .catch(function(error) {
 
-    console.error("========== DISCORD FETCH ERROR ==========");
-    console.error(error);
+    debugBox.textContent =
+        "DISCORD ERROR: " + error.message;
 
 });
 
