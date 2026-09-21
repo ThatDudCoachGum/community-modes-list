@@ -66,6 +66,15 @@ body {
 
 
 /* =========================
+   HIDE OLD DISCORD DEBUG BOX
+   ========================= */
+
+body > div[style*="position: fixed"][style*="bottom: 20px"] {
+    display: none !important;
+}
+
+
+/* =========================
    INTRO
    ========================= */
 
