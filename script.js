@@ -3,11 +3,29 @@ const modes = document.querySelectorAll(".mode");
 
 
 // =========================
-// DISCORD LOGIN CHECK
+// DISCORD LOGIN
 // =========================
 
 const DISCORD_WORKER =
     "https://cml-discord-login.majorbooz22.workers.dev";
+
+const accountBox =
+    document.getElementById("accountBox");
+
+
+// Show login button immediately
+
+accountBox.innerHTML = `
+    <a
+        id="loginButton"
+        href="${DISCORD_WORKER}/login"
+    >
+        Login with Discord
+    </a>
+`;
+
+
+// Check whether the user is already logged in
 
 fetch(DISCORD_WORKER + "/me", {
     method: "GET",
@@ -26,9 +44,19 @@ fetch(DISCORD_WORKER + "/me", {
 
     if (data.loggedIn === true) {
 
+        // User is logged in
+
         document.body.classList.add("logged-in");
 
+        accountBox.innerHTML = `
+            <span id="loggedInButton">
+                Logged In
+            </span>
+        `;
+
     } else {
+
+        // User is not logged in
 
         document.body.classList.remove("logged-in");
 
@@ -37,7 +65,12 @@ fetch(DISCORD_WORKER + "/me", {
 })
 .catch(function(error) {
 
-    console.error("Discord login check failed:", error);
+    console.error(
+        "Discord login check failed:",
+        error
+    );
+
+    // Keep Submit hidden if login check fails
 
     document.body.classList.remove("logged-in");
 
@@ -83,21 +116,38 @@ modes.forEach(function(mode) {
 
     mode.addEventListener("click", function(event) {
 
-        if (event.target.classList.contains("verifier")) {
+        // Don't open/close when clicking verifier
+
+        if (
+            event.target.classList.contains("verifier")
+        ) {
             return;
         }
 
-        if (event.target.classList.contains("submit-button")) {
+
+        // Don't open/close when clicking Submit
+
+        if (
+            event.target.classList.contains("submit-button")
+        ) {
             return;
         }
+
+
+        // Close all other modes
 
         modes.forEach(function(otherMode) {
 
             if (otherMode !== mode) {
+
                 otherMode.classList.remove("open");
+
             }
 
         });
+
+
+        // Toggle this mode
 
         mode.classList.toggle("open");
 
